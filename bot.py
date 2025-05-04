@@ -88,6 +88,32 @@ async def ban(ctx, member: discord.Member, tiempo="0", apelable="False", *, reas
     await ctx.send(f"🔨 El jugador ha sido baneado. Motivo: {reason} | {tiempo_str} | {apelable_str}")
 
 @bot.command()
+async def tempban(ctx, member: discord.Member, tiempo: int, *, reason="No especificado"):
+    if is_high_rank(member):
+        await ctx.send("No puedes banear a un alto rango.")
+        return
+    await member.ban(reason=reason)
+    await ctx.send(f"🔨 El jugador ha sido baneado temporalmente por {tiempo} minutos. Motivo: {reason}")
+    await asyncio.sleep(tiempo * 60)  # Tiempo en minutos
+    await member.unban(reason="Tempban ha finalizado.")
+    await ctx.send(f"{member.mention} ha sido desbaneado después del ban temporal.")
+
+@bot.command()
+async def mute(ctx, member: discord.Member, tiempo: int):
+    if is_high_rank(member):
+        await ctx.send("No puedes mutear a un alto rango.")
+        return
+    mute_role = discord.utils.get(ctx.guild.roles, name="Muted")
+    if mute_role not in member.roles:
+        await member.add_roles(mute_role)
+        await ctx.send(f"{member.mention} ha sido muteado por {tiempo} minutos.")
+        await asyncio.sleep(tiempo * 60)  # Tiempo en minutos
+        await member.remove_roles(mute_role)
+        await ctx.send(f"{member.mention} ha sido desmuteado.")
+    else:
+        await ctx.send(f"{member.mention} ya está muteado.")
+
+@bot.command()
 async def afk(ctx, *, reason="AFK"):
     afks[ctx.author.id] = reason
     await ctx.send(f"{ctx.author.mention} está ahora AFK: {reason}")
@@ -110,6 +136,24 @@ async def clear(ctx, amount: int):
 async def roles(ctx):
     embed = discord.Embed(title="🎖 Roles Especiales", color=discord.Color.blue())
     embed.add_field(name="Founder", value="Fundador del servidor.", inline=False)
+    await ctx.send(embed=embed)
+
+@bot.command()
+@commands.has_permissions(kick_members=True)
+async def kick(ctx, member: discord.Member, *, reason="No especificado"):
+    if is_high_rank(member):
+        await ctx.send("No puedes kickear a un alto rango.")
+        return
+    await member.kick(reason=reason)
+    await ctx.send(f"👢 {member.mention} ha sido expulsado. Motivo: {reason}")
+
+@bot.command()
+async def userinfo(ctx, member: discord.Member):
+    embed = discord.Embed(title=f"Información de {member.name}", color=discord.Color.blue())
+    embed.add_field(name="ID", value=str(member.id))
+    embed.add_field(name="Fecha de unión", value=str(member.joined_at))
+    embed.add_field(name="Fecha de creación", value=str(member.created_at))
+    embed.add_field(name="Roles", value=", ".join([role.name for role in member.roles[1:]]))  # Excluir el rol @everyone
     await ctx.send(embed=embed)
 
 @bot.event
