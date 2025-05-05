@@ -167,6 +167,4 @@ def is_high_rank(member):
     high_roles = ["Founder", "Owner", "Admin"]
     return any(role.name in high_roles for role in member.roles)
 
-bot.run("MTM2ODc0OTAwMjg5NTM5Njk2NA.Ga54ce.dsp40UMdVYUrEHwLJ8xIi2Dre-jVYX8QO4L71Q")
-import os
-bot.run(os.getenv("TOKEN"))
+bot.run("TOKEN HERE")
