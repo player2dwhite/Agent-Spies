@@ -1,0 +1,10 @@
+@bot.command()
+async def gameinfo(ctx):
+    jugando = [m for m in ctx.guild.members if m.activity and m.activity.type == discord.ActivityType.playing]
+    if not jugando:
+        return await ctx.send("🎮 Nadie está jugando actualmente.")
+
+    embed = discord.Embed(title="🎮 Usuarios jugando", color=discord.Color.green())
+    for m in jugando:
+        embed.add_field(name=m.name, value=m.activity.name, inline=True)
+    await ctx.send(embed=embed)
