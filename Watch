@@ -1,0 +1,18 @@
+watched_users = {}
+
+@bot.command()
+@commands.has_permissions(administrator=True)
+async def watch(ctx, member: discord.Member, *, motivo="Observación"):
+    watched_users[member.id] = motivo
+    await ctx.send(f"👁 {member.mention} está ahora bajo vigilancia. Motivo: {motivo}")
+
+@bot.command()
+async def watched(ctx):
+    if not watched_users:
+        return await ctx.send("✅ No hay usuarios vigilados.")
+    embed = discord.Embed(title="🕵 Usuarios bajo vigilancia", color=discord.Color.dark_red())
+    for user_id, reason in watched_users.items():
+        user = ctx.guild.get_member(user_id)
+        name = user.name if user else f"ID: {user_id}"
+        embed.add_field(name=name, value=reason, inline=False)
+    await ctx.send(embed=embed)
