@@ -1,0 +1,11 @@
+@bot.command()
+async def perfilid(ctx, user_id: int):
+    try:
+        user = await bot.fetch_user(user_id)
+        embed = discord.Embed(title=f"📋 Perfil de {user}", color=discord.Color.purple())
+        embed.add_field(name="ID", value=user.id)
+        embed.add_field(name="Creación", value=user.created_at.strftime('%d/%m/%Y %H:%M'))
+        embed.set_thumbnail(url=user.avatar.url if user.avatar else discord.Embed.Empty)
+        await ctx.send(embed=embed)
+    except:
+        await ctx.send("❌ No se pudo encontrar ese usuario.")
