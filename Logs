@@ -1,0 +1,23 @@
+action_logs = []
+
+def registrar_log(tipo, autor, objetivo, razon):
+    action_logs.append({
+        "tipo": tipo,
+        "autor": autor.name,
+        "objetivo": objetivo.name,
+        "razon": razon,
+        "hora": datetime.utcnow().strftime('%d/%m/%Y %H:%M')
+    })
+
+@bot.command()
+async def logs(ctx):
+    if not action_logs:
+        return await ctx.send("📂 No hay acciones registradas aún.")
+    embed = discord.Embed(title="🗃 Registro de Moderación", color=discord.Color.greyple())
+    for log in action_logs[-10:]:
+        embed.add_field(
+            name=f"{log['tipo']} por {log['autor']} a {log['objetivo']}",
+            value=f"🕒 {log['hora']} | Motivo: {log['razon']}",
+            inline=False
+        )
+    await ctx.send(embed=embed)
