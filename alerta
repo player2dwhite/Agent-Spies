@@ -1,0 +1,6 @@
+@bot.command()
+async def alerta(ctx, *, mensaje):
+    staff_role = get(ctx.guild.roles, name="Staff")
+    if not staff_role:
+        return await ctx.send("❌ No se encontró el rol de Staff.")
+    await ctx.send(f"🚨 {staff_role.mention} ALERTA: {mensaje}")
