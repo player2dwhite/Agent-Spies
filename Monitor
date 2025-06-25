@@ -1,0 +1,13 @@
+@bot.event
+async def on_user_update(before, after):
+    if before.name != after.name:
+        print(f"📝 Cambio de nombre: {before.name} -> {after.name}")
+
+@bot.event
+async def on_member_update(before, after):
+    if before.nick != after.nick:
+        canal_log = discord.utils.get(after.guild.text_channels, name="logs")
+        if canal_log:
+            await canal_log.send(
+                f"🔁 {before.name} cambió su apodo: `{before.nick}` ➜ `{after.nick}`"
+            )
